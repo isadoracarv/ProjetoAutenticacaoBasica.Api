@@ -18,7 +18,7 @@
     public class PassageiroNoVooDto
     {
         public string Nome { get; set; }
-        public string Assento { get; set; }
+        public int Assento { get; set; }
     }
 
     public class VooManifestoDto

@@ -42,9 +42,33 @@ namespace ProjetoAutenticacaoBasica.Api.Controllers
                 Id = v.Id,
                 Codigo = v.Codigo,
                 Trajeto = v.Origem + "->" + v.Destino
-            })
-            .ToListAsync();
+            }).ToListAsync();
+
            return Ok(voos);
+        }
+
+        [HttpGet("codigo/{codigo}")]
+        public async Task<ActionResult<VooManifestoDto>> GetVooPorCodigo(int codigo)
+        {
+            var manifesto = await _context.Voos.AsNoTracking().Where(v => v.Codigo == codigo).Select(v => new VooManifestoDto
+            {
+                Id = v.Id,
+                Codigo = v.Codigo,
+                Trajeto = v.Origem + "->" + v.Destino,
+                Passageiro = v.Passagens.Select(p => new PassageiroNoVooDto
+                {
+                    Nome = p.Passageiro.Nome,
+                    Assento = p.Assento
+                }).ToList()
+
+            }).FirstOrDefaultAsync();
+
+            if (manifesto is null)
+            {
+                return NotFound("Voo não encontrado.");
+            }
+
+            return Ok(manifesto);
         }
     }
 }
